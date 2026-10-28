@@ -1,3 +1,3 @@
 api to view logs 
 styling 
-show pop ups on browser after any operation
+show pop ups on browser after any operation 
