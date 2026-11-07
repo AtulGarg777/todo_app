@@ -9,6 +9,8 @@ function Todoapp({ username }) {
   let todos = useSelector((state) => state.todos.value)
   let [editInd, setEditInd] = useState(null);
   let dispatch = useDispatch();
+  let [todoHis, setTodoHis] = useState([]);
+  let [openId, setOpenId] = useState(-1)
 
 
   async function addTodo() {
@@ -81,6 +83,15 @@ function Todoapp({ username }) {
     setEditInd(ind)
   }
 
+  async function prevTodos(e, i) {
+
+    let res = await fetch(`http://localhost:8000/todos/prev?username=${username}&editInd=${i}`)
+    let data = await res.json();
+    setTodoHis(data.data)
+    setOpenId(i)
+
+  }
+
   return (
     <>
       <div>
@@ -95,6 +106,12 @@ function Todoapp({ username }) {
                 <li>{val}</li>
                 <button onClick={() => delTodo(ind)}>del</button>
                 <button type="button" onClick={() => editTodo(val, ind)}>Edit</button>
+                <button type="button" onClick={(e) => prevTodos(e, ind)}>History</button>
+                {openId == ind && (todoHis.length < 1 ? 'No History' : todoHis.map((val, ind) => {
+                  return (
+                    <p key={ind}>{ind + 1}. {val}</p>
+                  )
+                }))}
               </div>
             )
           })}

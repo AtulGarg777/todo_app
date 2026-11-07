@@ -2,6 +2,30 @@ const router = require('express').Router();
 let { UserModel } = require("../Models/UserModel")
 let { TodosModel } = require('../Models/TodosModel');
 
+router.get('/prev', async (req, res) => {
+    try {
+        let { username, editInd } = req.query;
+
+        if (!username || editInd == null) {
+            res.json({ msg: 'username and index is required', success: false })
+        }
+
+        let user = await UserModel.findOne({ username }).populate('todos');
+
+        if (!user) {
+            res.json({ msg: 'user not found', success: false })
+        }
+
+        let data = user.todos[editInd]
+
+        
+        res.json({ data: data?.todoHistory, success: true })
+    } catch (err) {
+        res.status(500).json({ success: false, msg: 'error in getting the history of todos' })
+    }
+
+})
+
 router.get('/:username', async (req, res) => {
     let { username } = req.params;
     let user = await UserModel.find({ username })

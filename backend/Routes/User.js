@@ -15,11 +15,12 @@ router.patch('/:username', async (req, res) => {
         }
 
         let user = await UserModel.findOne({ username }).populate("todos");
+
         let editObj = user.todos.find((v, i, arr) => i == editInd)
 
         let editoObj_id = editObj._id;
 
-        await TodosModel.findByIdAndUpdate(editoObj_id, { todo: inpValue })
+        await TodosModel.findByIdAndUpdate(editoObj_id, { $push: { todoHistory: editObj?.todo }, todo: inpValue })
 
         //creating log what user did
         let newLog = await logsModel.create({ mylog: `user: ${username} edit ${editObj.todo} to ${inpValue}`, userId: user._id })
@@ -85,8 +86,8 @@ router.post('/:username', async (req, res) => {
     }
 
     //creating log that login
-        let newLog = await logsModel.create({ mylog: `user: ${username} login successfully`, userId: user._id })
-        await UserModel.updateOne({ username: username }, { $push: { "allLogs": newLog._id } })
+    let newLog = await logsModel.create({ mylog: `user: ${username} login successfully`, userId: user._id })
+    await UserModel.updateOne({ username: username }, { $push: { "allLogs": newLog._id } })
 
     //below statement work for get request
     res.json({ msg: "user already exist", success: true, user })

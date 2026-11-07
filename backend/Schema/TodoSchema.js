@@ -1,9 +1,11 @@
 let mongoose = require('mongoose');
 
 let TodoSchema = new mongoose.Schema({
-    todo:{
+    todo: {
         type: String,
-    }
+    }, todoHistory: [{
+        type: String
+    }]
 })
 
-module.exports={TodoSchema}
+module.exports = { TodoSchema }
